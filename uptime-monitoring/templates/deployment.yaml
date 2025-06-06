@@ -1,0 +1,67 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{ include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 8 }}
+  template:
+    metadata:
+      labels:
+        {{ include "app.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/port: '8384' 
+        prometheus.io/scrape: 'true'  
+    spec:
+      containers:
+        - name: {{ template "app.fullname" . }}
+          image: {{ .Values.image.kuma }}
+          ports:
+            - containerPort: 3001
+              protocol: TCP
+          env:
+            - name: UPTIME_KUMA_PORT
+              value: "3001"
+            - name: UPTIME_KUMA_DB_TYPE
+              value: "sqlite"
+          resources:
+            requests:
+              cpu: {{ .Values.resources.kuma.requests.cpu }}
+              memory: {{ .Values.resources.kuma.requests.memory }}
+            limits:
+              memory: {{ .Values.resources.kuma.limits.memory }}
+          volumeMounts:
+            - name: {{ template "app.fullname" . }}-data
+              mountPath: /app/data
+        - name: oauth-proxy
+          image: {{ .Values.image.oauthProxy }}
+          args:
+            - '--provider=openshift'
+            - '--pass-basic-auth=false'
+            - '--https-address='
+            - '--http-address=:8080'
+            - '--email-domain=*'
+            - '--upstream=http://localhost:3001'
+            - '--cookie-secret=some-secure-cookie-secret'
+            - '--openshift-service-account={{ template "app.fullname" . }}'
+            - '--skip-auth-regex=^/(status|metrics|assets|api/(push|badge|status-page/heartbeat)|upload)(/.*)?$|^/icon\.svg$'
+            - '--openshift-sar={"namespace": "{{ .Values.namespace }}", "resource": "services", "verb": "get"}'
+          ports:
+            - name: oauth-proxy
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: {{ .Values.resources.oAuthProxy.requests.cpu }}
+              memory: {{ .Values.resources.oAuthProxy.requests.memory }}
+            limits:
+              memory: {{ .Values.resources.oAuthProxy.limits.memory }}
+      volumes:
+        - name: {{ template "app.fullname" . }}-data
+          persistentVolumeClaim:
+            claimName: {{ template "app.fullname" . }}
+      serviceAccountName: {{ template "app.fullname" . }}

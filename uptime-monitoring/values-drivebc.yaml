@@ -1,0 +1,9 @@
+fullnameOverride: drivebc-monitoring # This is the full name of the release, which will be used in the generated resources.
+nameOverride: drivebc-monitoring # This is the name of the release, which will be used in the generated resources.
+namespace: a781ec-tools # The namespace where the resources will be deployed. Ensure this namespace exists in your OpenShift cluster.
+
+route:
+  host: drivebc-monitoring.apps.golddr.devops.gov.bc.ca # The host for the route, which will be used to access the application.
+  ipallowlist: "142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13 208.181.128.46/32" # IP allowlist for the route, which will restrict access to the specified IP addresses.
+
+

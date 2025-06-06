@@ -1,0 +1,32 @@
+fullnameOverride:  # This is the full name of the release, which will be used in the generated resources.
+nameOverride:  # This is the name of the release, which will be used in the generated resources.
+namespace:  # The namespace where the resources will be deployed. Ensure this namespace exists in your OpenShift cluster.
+
+replicaCount: 1 # Should always be 1 or 0
+
+image:
+  kuma: louislam/uptime-kuma:beta-rootless.3 # Use the beta-rootless image for Uptime Kuma
+  oauthProxy: quay.io/openshift/origin-oauth-proxy:4.16 
+
+resources:
+  kuma:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 400Mi
+      cpu: 50m
+  oAuthProxy:
+    limits:
+      memory: 64Mi
+    requests:
+      memory: 32Mi
+      cpu: 10m
+
+storage:
+  size: 4Gi
+
+route:
+  host: # The host for the route, which will be used to access the application.
+  ipallowlist: "142.34.53.0/24 142.22.0.0/15 142.24.0.0/13 142.32.0.0/13" # IP allowlist for the route, which will restrict access to the specified IP addresses.
+
+
