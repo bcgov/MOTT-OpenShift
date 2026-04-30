@@ -48,7 +48,7 @@ spec:
             - '--upstream=http://localhost:3001'
             - '--cookie-secret=some-secure-cookie-secret'
             - '--openshift-service-account={{ template "app.fullname" . }}'
-            - '--skip-auth-regex=^/(status|metrics|assets|api/(push|badge|status-page/heartbeat)|upload)(/.*)?$|^/icon\.svg$'
+            - '--skip-auth-regex=^/(status|metrics|assets|api/(push|badge|status-page/heartbeat)|upload)(/.*)?$|^/icon\.svg$|^/manifest\.json$|^/favicon\.ico$|^/apple-touch-icon.*$'
             - '--openshift-sar={"namespace": "{{ .Values.namespace }}", "resource": "services", "verb": "get"}'
           ports:
             - name: oauth-proxy
@@ -65,3 +65,5 @@ spec:
           persistentVolumeClaim:
             claimName: {{ template "app.fullname" . }}
       serviceAccountName: {{ template "app.fullname" . }}
+  strategy:
+    type: Recreate
