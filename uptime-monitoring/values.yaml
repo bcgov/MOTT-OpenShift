@@ -5,7 +5,7 @@ namespace:  # The namespace where the resources will be deployed. Ensure this na
 replicaCount: 1 # Should always be 1 or 0
 
 image:
-  kuma: louislam/uptime-kuma:2.5.4-slim-rootless # Use the rootless image of Uptime Kuma to run it in OpenShift
+  kuma: louislam/uptime-kuma:2.5.11-slim-rootless # Use the rootless image of Uptime Kuma to run it in OpenShift
   oauthProxy: registry.redhat.io/openshift4/ose-oauth-proxy-rhel9:v4.18
 
 resources:
